@@ -195,18 +195,37 @@ When the user asks to modify, update, or change the website, you can see the cur
             logger.error(f"Complete project generation failed: {str(e)}", exc_info=True)
             return await self._generate_fallback_project(prompt)
 
-    async def _analyze_user_intent(self, prompt: str, provider: str, model: str, session_id: str) -> Dict[str, Any]:
+    async def _analyze_user_intent(self, prompt: str, provider: str, model: str, session_id: str, current_website: Optional[Dict] = None) -> Dict[str, Any]:
         """Analyze what the user is ACTUALLY asking for"""
+        
+        # Build context message if there's an existing website
+        context_info = ""
+        if current_website:
+            context_info = f"""
+
+🔄 IMPORTANT: This is an ITERATIVE EDIT request. An existing website is already built.
+The user wants to MODIFY or ADD TO the existing website, not create a new one from scratch.
+
+Current website type: {current_website.get('structure', {}).get('app_type', 'unknown')}
+Current features: {', '.join(current_website.get('structure', {}).get('primary_features', []))}
+
+Analyze if the user is asking to:
+- ADD new features to the existing website
+- MODIFY existing features
+- CHANGE the design/styling
+- FIX or improve something"""
+        
         chat = LlmChat(
             api_key=self.api_key,
             session_id=f"{session_id}_analyzer",
-            system_message="""You are an expert at understanding user intent for web applications.
+            system_message=f"""You are an expert at understanding user intent for web applications.
 
 Analyze the user's request and identify:
 1. What TYPE of website/app they want (e.g., video platform, e-commerce, social media, dashboard, etc.)
 2. What SPECIFIC FEATURES they need (e.g., video grid, shopping cart, user profiles, data visualization)
 3. What VISUAL STYLE is appropriate (e.g., YouTube's dark theme with thumbnails, Amazon's product grid, Netflix's hero banner)
 4. What COMPONENTS are needed (e.g., navigation bar, sidebar, video player, cards, forms)
+{context_info}
 
 Return ONLY a JSON object with this structure:
 {
