@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoTube</title>
+    
+    <!-- Modern Icon Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Animation Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                <span class="logo-icon">📺</span>
+                VideoTube
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Search" id="searchInput">
+                <button class="search-btn" onclick="handleSearch()">🔍</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="header-btn">➕</button>
+            <button class="header-btn">🔔</button>
+            <button class="header-btn">👤</button>
+        </div>
+    </header>
+    
+    <aside class="sidebar" id="sidebar">
+        <nav>
+            <a href="#" class="nav-item active">🏠 Home</a>
+            <a href="#" class="nav-item">🎬 Shorts</a>
+            <a href="#" class="nav-item">📺 Subscriptions</a>
+        </nav>
+        <div class="nav-separator"></div>
+        <nav>
+            <a href="#" class="nav-item">📚 Library</a>
+            <a href="#" class="nav-item">🕐 History</a>
+            <a href="#" class="nav-item">📹 Your videos</a>
+            <a href="#" class="nav-item">⏰ Watch later</a>
+            <a href="#" class="nav-item">👍 Liked videos</a>
+        </nav>
+        <div class="nav-separator"></div>
+        <div class="nav-section-title">Subscriptions</div>
+        <nav>
+            <a href="#" class="nav-item">🎨 TechReviews</a>
+            <a href="#" class="nav-item">🎮 CodeWithMe</a>
+            <a href="#" class="nav-item">🎵 MusicVibes</a>
+            <a href="#" class="nav-item">🎯 GameZone</a>
+        </nav>
+        <div class="nav-separator"></div>
+        <div class="nav-section-title">Explore</div>
+        <nav>
+            <a href="#" class="nav-item">🔥 Trending</a>
+            <a href="#" class="nav-item">🛍️ Shopping</a>
+            <a href="#" class="nav-item">🎵 Music</a>
+            <a href="#" class="nav-item">🎬 Movies</a>
+            <a href="#" class="nav-item">📡 Live</a>
+            <a href="#" class="nav-item">🎮 Gaming</a>
+            <a href="#" class="nav-item">⚽ Sports</a>
+        </nav>
+    </aside>
+    
+    <main class="main-content">
+        <div class="chips-container">
+            <div class="chip active">All</div>
+            <div class="chip">Music</div>
+            <div class="chip">Gaming</div>
+            <div class="chip">News</div>
+            <div class="chip">Live</div>
+            <div class="chip">Sports</div>
+            <div class="chip">Learning</div>
+            <div class="chip">Fashion</div>
+            <div class="chip">Podcasts</div>
+        </div>
+        
+        <div class="video-grid" id="videoGrid"></div>
+    </main>
+    
+    
+    <script src="static/app.js"></script>
+</body>
+</html>
