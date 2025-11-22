@@ -113,8 +113,9 @@ When users ask to modify the website, acknowledge their request and explain what
             # Generate frontend with context (pass existing website for iterative editing)
             frontend_result = await self._generate_contextual_frontend(prompt, analysis, provider, model_name, session_id, current_website)
             
-            # Generate backend
-            backend_result = await self._generate_backend(prompt, provider, model_name, session_id)
+            # Generate backend (pass existing backend for editing if available)
+            existing_backend = current_website.get('python_backend') if current_website else None
+            backend_result = await self._generate_backend(prompt, provider, model_name, session_id, existing_backend)
             
             # Generate documentation
             readme = await self._generate_readme(prompt, provider, model_name, session_id)
