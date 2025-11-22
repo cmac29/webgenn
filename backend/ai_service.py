@@ -301,16 +301,36 @@ MAKE IT LOOK AND FUNCTION LIKE THE REAL THING!"""
         if not html and "<!DOCTYPE" in response:
             html = self._extract_html_direct(response)
         
-        # Ensure links
-        if html and "<link" not in html and "</head>" in html:
-            html = html.replace("</head>", '    <link rel="stylesheet" href="styles.css">\n</head>')
-        
-        if html and "<script" not in html and "</body>" in html:
-            html = html.replace("</body>", '    <script src="app.js"></script>\n</body>')
+        # CRITICAL: For iframe preview, CSS and JS MUST be embedded in HTML
+        # Remove any external file references and embed the content
+        if html:
+            # Check if HTML has embedded styles
+            has_embedded_css = "<style>" in html
+            has_embedded_js = "<script>" in html and "src=" not in html[:html.find("<script>") + 50] if "<script>" in html else False
+            
+            if not has_embedded_css and css:
+                # Embed CSS into HTML
+                logger.info("Embedding CSS into HTML for iframe preview")
+                if "</head>" in html:
+                    html = html.replace("</head>", f"    <style>\n{css}\n    </style>\n</head>")
+                else:
+                    html = html.replace("<head>", f"<head>\n    <style>\n{css}\n    </style>")
+            
+            if not has_embedded_js and js:
+                # Embed JS into HTML
+                logger.info("Embedding JS into HTML for iframe preview")
+                if "</body>" in html:
+                    html = html.replace("</body>", f"    <script>\n{js}\n    </script>\n</body>")
+                else:
+                    html += f"\n<script>\n{js}\n</script>"
+            
+            # Remove external file references
+            html = re.sub(r'<link[^>]*href=["\']styles\.css["\'][^>]*>', '', html)
+            html = re.sub(r'<script[^>]*src=["\']app\.js["\'][^>]*></script>', '', html)
         
         # Validate quality
-        if len(html) < 500:
-            logger.warning(f"HTML too short ({len(html)} chars), using fallback")
+        if len(html) < 500 or "<style>" not in html:
+            logger.warning(f"HTML invalid or too short ({len(html)} chars), using high-quality fallback")
             return await self._generate_fallback_frontend(prompt, analysis)
         
         if len(css) < 300:
