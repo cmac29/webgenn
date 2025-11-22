@@ -156,6 +156,51 @@ export default function PreviewPanel({ website }) {
                 }}
               />
             </TabsContent>
+
+            <TabsContent value="backend" className="h-full m-0">
+              <Editor
+                height="100%"
+                defaultLanguage="python"
+                value={website.python_backend || '# No backend generated'}
+                theme="vs-dark"
+                options={{
+                  readOnly: true,
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false,
+                }}
+              />
+            </TabsContent>
+
+            {website?.files && website.files.length > 0 && (
+              <TabsContent value="files" className="h-full m-0 p-4 overflow-y-auto">
+                <div className="space-y-2">
+                  {website.files.map((file, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-slate-800 rounded-lg p-4 border border-slate-700 hover:border-purple-600 transition-colors cursor-pointer"
+                      onClick={() => setSelectedFile(file)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <span className="px-2 py-1 bg-purple-600 rounded text-xs font-mono">
+                            {file.file_type}
+                          </span>
+                          <span className="text-slate-100 font-medium">{file.filename}</span>
+                        </div>
+                        <span className="text-xs text-slate-400">
+                          {file.content?.length || 0} chars
+                        </span>
+                      </div>
+                      {file.description && (
+                        <p className="text-sm text-slate-400 mt-2">{file.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
         )}
       </div>
