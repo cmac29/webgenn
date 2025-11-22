@@ -157,10 +157,23 @@ backend:
         agent: "testing"
         comment: "✅ FILE-BASED PREVIEW SYSTEM FULLY OPERATIONAL! Comprehensive testing completed successfully. VALIDATION RESULTS: 1) Website Generation: ✅ PASS - Generated 5,725 char HTML in 118s with proper structure, 2) File Structure: ✅ PASS - All files created on disk at /app/backend/generated_projects/{session_id}/ with correct structure (index.html, static/styles.css, static/app.js, backend/server.py, requirements.txt), 3) HTML Linking: ✅ PASS - HTML properly contains <link rel='stylesheet' href='static/styles.css'> and <script src='static/app.js'></script>, 4) Preview Endpoints: ✅ PASS - All endpoints return 200 OK with correct content-types (HTML: text/html, CSS: text/css, JS: application/javascript), 5) ProjectManager Logs: ✅ PASS - Backend logs confirm 'Created project structure', 'Saved index.html', 'Saved styles.css', 'Saved app.js' etc. The professional file-based architecture is working perfectly - files are saved to disk, HTML properly links external resources, and preview endpoints serve files correctly instead of using srcDoc."
 
+frontend:
+  - task: "Preview Panel - File-Based Loading"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/components/PreviewPanel.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Updated PreviewPanel to use preview_url from backend instead of srcDoc. If preview_url exists, loads from file server endpoint, otherwise falls back to embedded srcDoc. This allows proper file loading with external CSS/JS references working correctly."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
