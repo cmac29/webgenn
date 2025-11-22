@@ -2107,27 +2107,60 @@ Format:
         }
 
     def _extract_code_block(self, text: str, language: str) -> Optional[str]:
+        """Enhanced code block extraction with multiple fallback methods"""
         try:
+            # Method 1: Standard markdown code block
             marker = f"```{language}"
             if marker in text:
                 parts = text.split(marker)
                 if len(parts) > 1:
-                    return parts[1].split("```")[0].strip()
-        except:
-            pass
+                    code = parts[1].split("```")[0].strip()
+                    if code:
+                        logger.debug(f"Extracted {language} via standard marker: {len(code)} chars")
+                        return code
+            
+            # Method 2: Code block without language specifier (```\n code \n```)
+            if "```" in text:
+                # Find all code blocks
+                blocks = re.findall(r'```(?:\w+)?\s*(.*?)\s*```', text, re.DOTALL)
+                for block in blocks:
+                    # Check if this block looks like the requested language
+                    if language == "html" and ("<!DOCTYPE" in block or "<html" in block):
+                        logger.debug(f"Extracted HTML via generic code block: {len(block)} chars")
+                        return block.strip()
+                    elif language == "css" and ("{" in block and (":" in block or ";" in block)):
+                        logger.debug(f"Extracted CSS via generic code block: {len(block)} chars")
+                        return block.strip()
+                    elif language in ["javascript", "js"] and ("function" in block or "const " in block or "let " in block or "var " in block):
+                        logger.debug(f"Extracted JS via generic code block: {len(block)} chars")
+                        return block.strip()
+        except Exception as e:
+            logger.error(f"Code extraction error: {e}")
         return None
 
     def _extract_html_direct(self, text: str) -> str:
+        """Enhanced HTML extraction with multiple methods"""
         try:
+            # Method 1: Standard DOCTYPE to </html>
             start = text.find("<!DOCTYPE")
             if start == -1:
                 start = text.find("<html")
             if start != -1:
                 end = text.rfind("</html>")
                 if end != -1:
-                    return text[start:end + 7].strip()
-        except:
-            pass
+                    html = text[start:end + 7].strip()
+                    logger.debug(f"Extracted HTML via DOCTYPE method: {len(html)} chars")
+                    return html
+            
+            # Method 2: Find HTML even without DOCTYPE
+            html_match = re.search(r'<html[^>]*>.*?</html>', text, re.DOTALL | re.IGNORECASE)
+            if html_match:
+                html = html_match.group(0)
+                logger.debug(f"Extracted HTML via regex: {len(html)} chars")
+                return html
+                
+        except Exception as e:
+            logger.error(f"HTML extraction error: {e}")
         return ""
 
     async def generate_image(self, prompt: str) -> str:
