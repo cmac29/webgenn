@@ -788,7 +788,7 @@ Format in Markdown."""
         }, indent=2)
 
     async def _generate_fallback_project(self, prompt: str) -> Dict[str, Any]:
-        """Fallback project if generation fails"""
+        """Fallback project if generation fails - Make it beautiful!"""
         html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -798,52 +798,266 @@ Format in Markdown."""
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="noise"></div>
+    <div class="gradient-bg"></div>
+    
     <div class="container">
-        <h1>🚀 Your Project</h1>
-        <p>{prompt}</p>
-        <button id="actionBtn">Get Started</button>
+        <div class="content">
+            <div class="badge">✨ AI Generated</div>
+            <h1>Your Project<br/>Is Ready</h1>
+            <p class="description">{prompt[:200]}</p>
+            <div class="button-group">
+                <button id="primaryBtn" class="btn-primary">Get Started</button>
+                <button id="secondaryBtn" class="btn-secondary">Learn More</button>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <span class="icon">🚀</span>
+                    <span>Fast</span>
+                </div>
+                <div class="feature">
+                    <span class="icon">🎨</span>
+                    <span>Beautiful</span>
+                </div>
+                <div class="feature">
+                    <span class="icon">⚡</span>
+                    <span>Modern</span>
+                </div>
+            </div>
+        </div>
     </div>
+    
     <script src="app.js"></script>
 </body>
 </html>"""
         
-        css = """* {
+        css = """@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --accent: #ec4899;
+    --text: #1e293b;
+    --text-light: #64748b;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    position: relative;
+    background: #0f172a;
+    color: white;
+}
+
+.gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        #667eea 0%, 
+        #764ba2 25%,
+        #f093fb 50%,
+        #4facfe 75%,
+        #00f2fe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -2;
+}
+
+.noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    z-index: -1;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
-    background: white;
-    padding: 60px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 800px;
+    padding: 40px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 32px;
+    padding: 80px 60px;
     text-align: center;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 100px rgba(99, 102, 241, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.description {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.button-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 60px;
 }
 
 button {
-    margin-top: 20px;
-    padding: 15px 40px;
-    background: #667eea;
-    color: white;
-    border: none;
+    padding: 18px 48px;
     border-radius: 50px;
-    font-size: 16px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Inter', sans-serif;
 }
 
-button:hover {
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    box-shadow: 
+        0 10px 30px rgba(99, 102, 241, 0.4),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 15px 40px rgba(99, 102, 241, 0.5),
+        0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
+}
+
+.features {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.feature span:last-child {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 60px 30px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    button {
+        width: 100%;
+    }
 }"""
         
         js = """document.addEventListener('DOMContentLoaded', () => {
