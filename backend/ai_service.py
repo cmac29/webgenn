@@ -403,9 +403,56 @@ Generate THREE separate code blocks, but remember the HTML will contain EMBEDDED
         )
         chat.with_model(provider, model)
         
-        frontend_prompt = f"""🚀 CREATE A COMPLETELY UNIQUE {analysis.get('app_type', 'website').upper()} 🚀
+        # Build existing website context if available
+        existing_code_context = ""
+        if current_website:
+            html_preview = current_website.get('html_content', '')[:3000]
+            css_preview = current_website.get('css_content', '')[:2000]
+            js_preview = current_website.get('js_content', '')[:1500]
+            
+            existing_code_context = f"""
+═══════════════════════════════════════════════════════════════
+🔄 ITERATIVE EDITING MODE - EXISTING WEBSITE CODE
+═══════════════════════════════════════════════════════════════
 
-⚠️ CRITICAL: Generate NEW, ORIGINAL code based on this SPECIFIC request. DO NOT reuse templates!
+⚠️ CRITICAL: You are MODIFYING an EXISTING website, NOT creating from scratch!
+
+The user's request is to EDIT/ADD TO this existing website. You MUST:
+1. Keep all existing features that the user doesn't ask to change
+2. Add or modify ONLY what the user specifically requests
+3. Maintain the overall structure and design consistency
+4. Preserve working functionality
+
+CURRENT HTML (preview - first 3000 chars):
+```html
+{html_preview}
+...
+```
+
+CURRENT CSS (preview - first 2000 chars):
+```css
+{css_preview}
+...
+```
+
+CURRENT JAVASCRIPT (preview - first 1500 chars):
+```javascript
+{js_preview}
+...
+```
+
+USER'S MODIFICATION REQUEST: {prompt}
+
+🎯 YOUR TASK: Intelligently modify the existing code to implement the user's request while preserving everything else.
+
+═══════════════════════════════════════════════════════════════
+"""
+        
+        frontend_prompt = f"""🚀 {'MODIFY EXISTING WEBSITE' if current_website else f'CREATE A COMPLETELY UNIQUE {analysis.get("app_type", "website").upper()}'} 🚀
+
+{existing_code_context if current_website else ''}
+
+{'⚠️ CRITICAL: This is an ITERATIVE EDIT. Modify the existing website based on the user request!' if current_website else '⚠️ CRITICAL: Generate NEW, ORIGINAL code based on this SPECIFIC request. DO NOT reuse templates!'}
 
 USER REQUEST: {prompt}
 
@@ -415,12 +462,15 @@ KEY COMPONENTS: {', '.join(analysis.get('key_components', []))}
 VISUAL STYLE: {analysis.get('visual_style')}
 LAYOUT: {analysis.get('layout_pattern')}
 
-🎯 REQUIREMENT: Create a UNIQUE design that matches THIS SPECIFIC request.
+{'''🎯 REQUIREMENT: Modify the EXISTING website to implement the user's request.
+- Keep everything that's already working
+- Add or change ONLY what the user asks for
+- Maintain design consistency''' if current_website else '''🎯 REQUIREMENT: Create a UNIQUE design that matches THIS SPECIFIC request.
 - If they ask for a YouTube clone → create a video platform interface
 - If they ask for a landing page → create a landing page
 - If they ask for a dashboard → create a dashboard
 - If they ask for e-commerce → create a shopping site
-- If they ask for a blog → create a blog layout
+- If they ask for a blog → create a blog layout'''}
 
 DO NOT generate the same layout repeatedly. Each request is DIFFERENT!
 
