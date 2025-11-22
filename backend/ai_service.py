@@ -547,15 +547,12 @@ KEY COMPONENTS: {', '.join(analysis.get('key_components', []))}
 VISUAL STYLE: {analysis.get('visual_style')}
 LAYOUT: {analysis.get('layout_pattern')}
 
-{'''🎯 REQUIREMENT: Modify the EXISTING website to implement the user's request.
-- Keep everything that's already working
-- Add or change ONLY what the user asks for
-- Maintain design consistency''' if current_website else '''🎯 REQUIREMENT: Create a UNIQUE design that matches THIS SPECIFIC request.
+🎯 REQUIREMENT: Create a UNIQUE design that matches THIS SPECIFIC request.
 - If they ask for a YouTube clone → create a video platform interface
 - If they ask for a landing page → create a landing page
 - If they ask for a dashboard → create a dashboard
 - If they ask for e-commerce → create a shopping site
-- If they ask for a blog → create a blog layout'''}
+- If they ask for a blog → create a blog layout
 
 DO NOT generate the same layout repeatedly. Each request is DIFFERENT!
 
