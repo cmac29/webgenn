@@ -236,12 +236,27 @@ async def generate_website(request: GenerateWebsiteRequest):
         {"_id": 0}
     ).sort("timestamp", 1).to_list(100)
     
+    # Get the latest generated website for context (for iterative editing)
+    current_website = None
+    try:
+        websites = await db.generated_websites.find(
+            {"session_id": request.session_id},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(1).to_list(1)
+        
+        if websites:
+            current_website = websites[0]
+            logger.info(f"Found existing website for session {request.session_id} - will use for iterative editing")
+    except Exception as e:
+        logger.warning(f"Could not retrieve existing website: {str(e)}")
+    
     # Generate website using AI with full project structure
     website_data = await ai_service.generate_complete_project(
         prompt=request.prompt,
         model=request.model,
         framework=request.framework,
-        conversation_history=messages
+        conversation_history=messages,
+        current_website=current_website
     )
     
     # Save files to disk for proper serving
