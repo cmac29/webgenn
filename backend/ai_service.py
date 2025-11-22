@@ -227,23 +227,65 @@ Return ONLY the JSON analysis object."""
 The HTML will be displayed in an IFRAME using srcDoc. This means:
 - ALL CSS MUST be in <style> tags inside <head>
 - ALL JavaScript MUST be in <script> tags inside <body>
-- NO external file references (no <link href="styles.css"> or <script src="app.js">)
+- NO external file references except CDN libraries
 - EVERYTHING must be self-contained in ONE HTML file
 
-VISUAL DESIGN REQUIREMENTS:
+📚 AVAILABLE LIBRARIES & APIs (Include via CDN in <head>):
+
+**Icon Libraries** (Use for professional icons):
+- Font Awesome 6.5: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  Usage: <i class="fas fa-heart"></i>, <i class="fab fa-youtube"></i>
+- Material Icons: <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  Usage: <span class="material-icons">home</span>
+
+**UI Frameworks** (For rapid styling):
+- Tailwind CSS: <script src="https://cdn.tailwindcss.com"></script>
+- Bootstrap 5: <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+**Animation Libraries**:
+- Animate.css: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  Usage: class="animate__animated animate__fadeIn"
+- AOS (Animate On Scroll): <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+**Chart Libraries** (For dashboards):
+- Chart.js: <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+- ApexCharts: <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+**Interaction Libraries**:
+- SortableJS (drag & drop): <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+- SwiperJS (carousels): <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+**Utility Libraries**:
+- Axios (HTTP requests): <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+- Day.js (dates): <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+- Lodash (utilities): <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+**Form Libraries**:
+- Cleave.js (input formatting): <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
+🎨 VISUAL DESIGN REQUIREMENTS:
 1. MATCH the exact visual style requested (YouTube → dark theme with video grid, Netflix → hero with content rows)
-2. Use PROFESSIONAL color schemes (not plain white backgrounds!)
+2. Use PROFESSIONAL color schemes with modern palettes
 3. Add proper spacing, padding, and margins (generous white space)
 4. Include hover effects, transitions, and animations
-5. Use modern fonts (Google Fonts imported via @import in CSS)
+5. Use modern fonts (Google Fonts: Inter, Roboto, Poppins, Space Grotesk)
 6. Create depth with shadows, gradients, and layering
-7. Make it look like it was designed by a professional UI/UX team
+7. Use Font Awesome or Material Icons for ALL icons (no emojis in production)
+8. Add micro-interactions (button ripples, card lifts, smooth transitions)
+9. Implement glassmorphism effects where appropriate
+10. Use CSS Grid and Flexbox for layouts
 
-FUNCTIONAL REQUIREMENTS:
+⚡ FUNCTIONAL REQUIREMENTS:
 - Include ALL necessary components (nav, sidebar, cards, players, forms)
 - Add working JavaScript for interactivity
-- Use realistic placeholder content with emojis or colored boxes
-- Make elements clickable with console logs or alerts
+- Use appropriate libraries for complex features (charts, carousels, animations)
+- Make elements clickable with proper event handlers
+- Add form validation where needed
+- Implement smooth scrolling and page transitions
+- Use local storage for state persistence
+- Add loading states and skeleton screens
 
 REFERENCE EXAMPLES:
 {reference_examples}
