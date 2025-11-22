@@ -136,10 +136,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "AI Website Generation - Fix repetitive layouts"
-  stuck_tasks:
-    - "AI Website Generation - Fix repetitive layouts"
+  current_focus: []
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
