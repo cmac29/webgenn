@@ -19,32 +19,26 @@ export default function HomePage() {
   const [generationSteps, setGenerationSteps] = useState([]);
 
   useEffect(() => {
-    // Create initial session on mount
-    createSession();
+    // Load sessions first
+    const storedSessions = JSON.parse(localStorage.getItem('sessions') || '[]');
+    setSessions(storedSessions);
+    
+    // Create initial session if no sessions exist
+    if (storedSessions.length === 0) {
+      createSession();
+    } else {
+      // Set the most recent session as active
+      setSessionId(storedSessions[0].session_id);
+    }
   }, []);
 
   useEffect(() => {
-    // Load sessions list
-    loadSessions();
-  }, [sessionId]);
-
-  useEffect(() => {
-    // Load messages when session changes
+    // Load messages and website when session changes
     if (sessionId) {
       loadMessages(sessionId);
       loadLatestWebsite(sessionId);
     }
   }, [sessionId]);
-
-  const loadSessions = async () => {
-    try {
-      // Get all sessions from localStorage for now (can be backend later)
-      const storedSessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-      setSessions(storedSessions);
-    } catch (error) {
-      console.error('Failed to load sessions:', error);
-    }
-  };
 
   const createSession = async (projectName = 'New Website Project') => {
     try {
@@ -66,16 +60,17 @@ export default function HomePage() {
       setGeneratedWebsite(null);
       
       toast.success('New project created!');
+      return newSession.session_id;
     } catch (error) {
       console.error('Failed to create session:', error);
       toast.error('Failed to create session');
+      return null;
     }
   };
 
   const renameSession = async (sessionId, newName) => {
     try {
-      // Update in backend (could add endpoint later)
-      // For now, update in localStorage
+      // Update in localStorage
       const storedSessions = JSON.parse(localStorage.getItem('sessions') || '[]');
       const updatedSessions = storedSessions.map(s => 
         s.session_id === sessionId ? { ...s, project_name: newName } : s
@@ -89,18 +84,23 @@ export default function HomePage() {
     }
   };
 
-  const selectSession = async (sessionId) => {
-    setSessionId(sessionId);
+  const selectSession = async (newSessionId) => {
+    if (newSessionId === sessionId) return; // Already selected
+    
+    setSessionId(newSessionId);
     setMessages([]);
     setGeneratedWebsite(null);
+    // Messages and website will be loaded by useEffect
   };
 
   const loadMessages = async (sessionId) => {
     try {
       const response = await axios.get(`${API}/session/${sessionId}/messages`);
       setMessages(response.data);
+      console.log(`Loaded ${response.data.length} messages for session ${sessionId}`);
     } catch (error) {
       console.error('Failed to load messages:', error);
+      setMessages([]);
     }
   };
 
@@ -108,8 +108,10 @@ export default function HomePage() {
     try {
       const response = await axios.get(`${API}/website/${sessionId}/latest`);
       setGeneratedWebsite(response.data);
+      console.log('Loaded website for session', sessionId);
     } catch (error) {
       // No website yet, that's ok
+      setGeneratedWebsite(null);
     }
   };
 
@@ -147,6 +149,9 @@ export default function HomePage() {
     } catch (error) {
       console.error('Failed to send message:', error);
       toast.error('Failed to send message');
+      
+      // Remove user message on error
+      setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
     }
@@ -160,24 +165,28 @@ export default function HomePage() {
 
     setIsLoading(true);
     
+    // Add user message
+    const userMsg = { role: 'user', content: prompt, timestamp: new Date() };
+    setMessages(prev => [...prev, userMsg]);
+    
     // Initialize generation steps
     setGenerationSteps([
-      { title: 'Planning', description: 'Analyzing requirements and creating structure...', status: 'active' },
-      { title: 'Design', description: 'Generating visual design and color scheme...', status: 'pending' },
-      { title: 'Code Generation', description: 'Writing HTML, CSS, and JavaScript...', status: 'pending' },
-      { title: 'Optimization', description: 'Polishing and optimizing code...', status: 'pending' }
+      { title: 'Understanding Requirements', description: 'Analyzing your request and planning the website structure...', status: 'active' },
+      { title: 'Designing Layout', description: 'Creating visual design, color schemes, and component layout...', status: 'pending' },
+      { title: 'Writing Code', description: 'Generating HTML, CSS, and JavaScript for full functionality...', status: 'pending' },
+      { title: 'Final Polish', description: 'Optimizing code and ensuring responsiveness...', status: 'pending' }
     ]);
 
     try {
       // Step 1: Planning
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setGenerationSteps(prev => prev.map((step, idx) => 
         idx === 0 ? { ...step, status: 'complete' } :
         idx === 1 ? { ...step, status: 'active' } : step
       ));
 
       // Step 2: Design
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setGenerationSteps(prev => prev.map((step, idx) => 
         idx === 1 ? { ...step, status: 'complete' } :
         idx === 2 ? { ...step, status: 'active' } : step
@@ -197,18 +206,40 @@ export default function HomePage() {
       ));
 
       // Step 4: Optimization
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setGenerationSteps(prev => prev.map(step => ({ ...step, status: 'complete' })));
 
       setGeneratedWebsite(response.data);
+      
+      // Add success message
+      const successMsg = {
+        role: 'assistant',
+        content: `✅ I've successfully generated your website! You can see it in the preview panel on the right. Feel free to:
+- View the HTML, CSS, and JavaScript tabs to see the code
+- Download the code using the download button
+- Open it in a new tab for full-screen viewing
+- Ask me to make any changes or improvements!`,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, successMsg]);
+      
       toast.success('Website generated successfully!');
     } catch (error) {
       console.error('Failed to generate website:', error);
-      toast.error('Failed to generate website');
+      toast.error('Failed to generate website. Please try again.');
+      
+      // Add error message
+      const errorMsg = {
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error while generating your website. Please try again with a different description or simpler requirements.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMsg]);
+      
       setGenerationSteps([]);
     } finally {
       setIsLoading(false);
-      setTimeout(() => setGenerationSteps([]), 2000);
+      setTimeout(() => setGenerationSteps([]), 3000);
     }
   };
 
