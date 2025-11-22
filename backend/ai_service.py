@@ -785,6 +785,26 @@ Generate ONLY the complete HTML code in a ```html code block."""
             css = self._enhance_css_for_app_type(css, analysis)
         
         logger.info(f"FINAL OUTPUT: HTML={len(html)}, CSS={len(css)}, JS={len(js)}")
+        
+        # CRITICAL VALIDATION: Prevent blank screens
+        has_doctype = "<!DOCTYPE" in html or "<html" in html
+        has_body_content = "<body>" in html and len(html) > 1000
+        has_styling = "<style>" in html or len(css) > 100
+        
+        if not has_doctype or not has_body_content or not has_styling:
+            logger.error("=" * 80)
+            logger.error("❌ BLANK SCREEN PREVENTION: Generated content is insufficient!")
+            logger.error(f"   DOCTYPE: {has_doctype}")
+            logger.error(f"   Body Content: {has_body_content} (HTML size: {len(html)})")
+            logger.error(f"   Styling: {has_styling} (CSS size: {len(css)})")
+            logger.error("   This would result in a blank/broken website for the user")
+            logger.error("   FORCING FALLBACK to ensure user gets a working website")
+            logger.error("=" * 80)
+            
+            # Use fallback to ensure user gets SOMETHING functional
+            return await self._generate_fallback_frontend(prompt, analysis)
+        
+        logger.info("✅ Content validation passed - website should render properly")
         logger.info("=" * 80)
         
         return {"html": html, "css": css, "js": js}
