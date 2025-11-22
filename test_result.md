@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "The AI website generator produces the same visual layout repeatedly, ignoring user prompts. Last test showed a blank white screen with suspiciously fast generation (3 seconds)."
+user_problem_statement: "The AI website generator needs to generate proper websites with separate files (HTML, CSS, JS, Backend) that are linked together and served from a proper file server for professional previews. The generated backend should also be able to run."
 
 backend:
   - task: "AI Website Generation - Fix repetitive layouts"
