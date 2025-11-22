@@ -2195,22 +2195,67 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return {"html": html, "css": css, "js": js}
 
-    async def _generate_backend(self, prompt: str, provider: str, model: str, session_id: str) -> Dict[str, str]:
-        """Generate Python FastAPI backend"""
-        chat = LlmChat(
-            api_key=self.api_key,
-            session_id=f"{session_id}_backend",
-            system_message="You are an expert backend developer. Generate production-ready FastAPI code."
-        )
-        chat.with_model(provider, model)
+    async def _generate_backend(self, prompt: str, provider: str, model: str, session_id: str, existing_backend: Optional[str] = None) -> Dict[str, str]:
+        """Generate or edit Python FastAPI backend"""
         
-        backend_prompt = f"""Create a Python FastAPI backend for: {prompt}
+        if existing_backend and len(existing_backend) > 100:
+            # EDITING MODE - Modify existing backend
+            logger.info("🔄 Backend editing mode - modifying existing backend code")
+            
+            chat = LlmChat(
+                api_key=self.api_key,
+                session_id=f"{session_id}_backend_edit",
+                system_message="You are an expert backend developer. Modify existing FastAPI code based on user requests."
+            )
+            chat.with_model(provider, model)
+            
+            backend_prompt = f"""EDIT EXISTING BACKEND CODE
+
+CURRENT BACKEND CODE:
+```python
+{existing_backend}
+```
+
+USER REQUEST: {prompt}
+
+INSTRUCTIONS:
+1. Analyze what backend changes are needed for this request
+2. Keep all existing routes and functionality that aren't mentioned
+3. Add new routes/endpoints if needed
+4. Modify existing routes if needed
+5. Update models if needed
+6. Return the COMPLETE modified backend code
+
+If the request is purely frontend (styling, layout), return the existing backend unchanged.
+
+Format:
+```python
+# server.py
+[COMPLETE MODIFIED CODE]
+```
+
+```txt
+# requirements.txt
+[UPDATED DEPENDENCIES IF NEEDED]
+```"""
+        else:
+            # NEW BACKEND MODE
+            logger.info("🆕 Backend creation mode - generating new backend")
+            
+            chat = LlmChat(
+                api_key=self.api_key,
+                session_id=f"{session_id}_backend",
+                system_message="You are an expert backend developer. Generate production-ready FastAPI code."
+            )
+            chat.with_model(provider, model)
+            
+            backend_prompt = f"""Create a Python FastAPI backend for: {prompt}
 
 Generate server.py with:
 - FastAPI app
 - CORS middleware
 - RESTful routes
-- MongoDB integration
+- MongoDB integration (if needed)
 - Pydantic models
 
 Also provide requirements.txt.
@@ -2231,6 +2276,11 @@ Format:
         
         python_code = self._extract_code_block(response, "python") or ""
         requirements = self._extract_code_block(response, "txt") or "fastapi==0.104.1\nuvicorn==0.24.0\nmotor==3.3.2\npydantic==2.5.0\npython-dotenv==1.0.0"
+        
+        # If editing mode and no code extracted, keep existing
+        if existing_backend and not python_code:
+            logger.warning("Backend editing produced no code - keeping existing backend")
+            python_code = existing_backend
         
         return {"python": python_code, "requirements": requirements, "models": ""}
 
