@@ -18,7 +18,7 @@ async def test_file_preview_system():
     """Test the file-based preview system"""
     
     # Configuration
-    base_url = "https://code-weaver-8.preview.emergentagent.com/api"
+    base_url = "https://webgen-ai-11.preview.emergentagent.com/api"
     test_session_id = "test-file-preview-simple"
     project_dir = Path(f"/app/backend/generated_projects/{test_session_id}")
     

@@ -35,7 +35,7 @@ class WebsiteGenerationTester:
             logger.error(f"Could not read frontend .env: {e}")
         
         # Fallback
-        return "https://code-weaver-8.preview.emergentagent.com/api"
+        return "https://webgen-ai-11.preview.emergentagent.com/api"
     
     async def create_session(self, project_name: str = "Test Project") -> str:
         """Create a new session and return session_id"""

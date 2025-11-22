@@ -37,7 +37,7 @@ class FilePreviewTester:
             logger.error(f"Could not read frontend .env: {e}")
         
         # Fallback
-        return "https://code-weaver-8.preview.emergentagent.com/api"
+        return "https://webgen-ai-11.preview.emergentagent.com/api"
     
     async def step1_generate_simple_website(self) -> Dict[str, Any]:
         """Step 1: Generate a Simple Website"""

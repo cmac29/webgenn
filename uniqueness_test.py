@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 async def generate_and_compare():
     """Generate two different websites and compare uniqueness"""
-    base_url = "https://code-weaver-8.preview.emergentagent.com/api"
+    base_url = "https://webgen-ai-11.preview.emergentagent.com/api"
     
     prompts = [
         "Create a beautiful recipe blog website with a hero section and recipe cards",
