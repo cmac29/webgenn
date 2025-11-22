@@ -567,13 +567,21 @@ body {
             return self._create_generic_fallback(prompt)
 
     def _create_video_platform_fallback(self, prompt: str) -> Dict[str, str]:
-        """Create a video platform UI fallback with EMBEDDED styles"""
+        """Create a video platform UI fallback with EMBEDDED styles and modern libraries"""
         html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VideoTube</title>
+    
+    <!-- Modern Icon Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Animation Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         
