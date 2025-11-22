@@ -105,13 +105,23 @@ export default function PreviewPanel({ website }) {
         ) : (
           <Tabs value={activeTab} className="h-full">
             <TabsContent value="preview" className="h-full m-0 p-0">
-              <iframe
-                srcDoc={website.html_content}
-                className="w-full h-full bg-white"
-                title="Website Preview"
-                sandbox="allow-scripts allow-same-origin"
-                data-testid="preview-iframe"
-              />
+              {website.preview_url ? (
+                <iframe
+                  src={`${process.env.REACT_APP_BACKEND_URL || ''}${website.preview_url}`}
+                  className="w-full h-full bg-white"
+                  title="Website Preview"
+                  sandbox="allow-scripts allow-same-origin allow-forms"
+                  data-testid="preview-iframe"
+                />
+              ) : (
+                <iframe
+                  srcDoc={website.html_content}
+                  className="w-full h-full bg-white"
+                  title="Website Preview"
+                  sandbox="allow-scripts allow-same-origin"
+                  data-testid="preview-iframe"
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="html" className="h-full m-0">
