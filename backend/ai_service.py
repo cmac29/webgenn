@@ -450,54 +450,76 @@ Generate THREE separate code blocks, but remember the HTML will contain EMBEDDED
         
         # Build existing website context if available - SHOW FULL CODE FOR EDITING
         existing_code_context = ""
+        edit_mode = False
         if current_website:
             html_full = current_website.get('html_content', '')
             css_full = current_website.get('css_content', '')
             js_full = current_website.get('js_content', '')
             
-            existing_code_context = f"""
+            # Validate we actually have existing content
+            if len(html_full) > 500:
+                edit_mode = True
+                logger.info(f"✅ EDIT MODE CONFIRMED - Existing HTML: {len(html_full)} chars")
+            else:
+                logger.warning(f"⚠️ Existing website too small ({len(html_full)} chars) - treating as new")
+            
+            if edit_mode:
+                existing_code_context = f"""
+╔═══════════════════════════════════════════════════════════════╗
+║  🔄 YOU ARE IN EDIT MODE - DO NOT REGENERATE ENTIRE WEBSITE  ║
+╚═══════════════════════════════════════════════════════════════╝
+
+⚠️⚠️⚠️ EXTREMELY CRITICAL INSTRUCTIONS ⚠️⚠️⚠️
+
+THIS IS **NOT** A REQUEST TO CREATE A NEW WEBSITE!
+THIS IS A REQUEST TO **EDIT** AN EXISTING WEBSITE!
+
+YOU HAVE BEEN PROVIDED WITH THE COMPLETE EXISTING CODE BELOW.
+THE USER WANTS YOU TO MAKE SPECIFIC CHANGES TO THIS CODE.
+
 ═══════════════════════════════════════════════════════════════
-🔄 ITERATIVE EDITING MODE - FULL EXISTING WEBSITE CODE
+📄 COMPLETE EXISTING HTML ({len(html_full)} characters):
 ═══════════════════════════════════════════════════════════════
-
-⚠️ CRITICAL: You are MODIFYING an EXISTING website, NOT creating from scratch!
-
-This is the COMPLETE current code. The user wants to make changes to this existing website.
-
-YOU MUST:
-1. Read and understand the existing code structure
-2. Make ONLY the specific changes the user requests
-3. Keep EVERYTHING else exactly as it is
-4. Don't redesign or rebuild - just EDIT what's requested
-5. Maintain all existing IDs, classes, and functionality
-
-COMPLETE CURRENT HTML:
 ```html
 {html_full}
 ```
 
-COMPLETE CURRENT CSS:
+═══════════════════════════════════════════════════════════════
+🎨 COMPLETE EXISTING CSS ({len(css_full)} characters):
+═══════════════════════════════════════════════════════════════
 ```css
 {css_full}
 ```
 
-COMPLETE CURRENT JAVASCRIPT:
+═══════════════════════════════════════════════════════════════
+⚡ COMPLETE EXISTING JAVASCRIPT ({len(js_full)} characters):
+═══════════════════════════════════════════════════════════════
 ```javascript
 {js_full}
 ```
 
-USER'S MODIFICATION REQUEST: {prompt}
+═══════════════════════════════════════════════════════════════
+👤 USER'S EDIT REQUEST:
+═══════════════════════════════════════════════════════════════
+{prompt}
 
-🎯 YOUR TASK: 
-1. Analyze what the user wants to change/add
-2. Make surgical edits to the existing code
-3. Return the COMPLETE modified code (not just the changes)
-4. Preserve all existing features not mentioned in the request
+═══════════════════════════════════════════════════════════════
+🎯 YOUR REQUIRED EDITING APPROACH:
+═══════════════════════════════════════════════════════════════
 
-EXAMPLE:
-- User says "add a dark mode toggle" → Add toggle button + dark mode CSS, keep everything else
-- User says "change header color to blue" → Change header color only, keep all other styles
-- User says "add a contact form" → Insert contact form in appropriate location, keep existing sections
+1. COPY the entire existing HTML, CSS, and JavaScript code above
+2. IDENTIFY which specific parts need to change based on user's request
+3. MAKE ONLY those specific changes
+4. RETURN the complete modified code with changes integrated
+5. DO NOT regenerate from scratch
+6. DO NOT remove existing features
+7. DO NOT change unrelated code
+
+EDITING VERIFICATION:
+- ✅ The returned HTML should be similar length to existing ({len(html_full)} chars)
+- ✅ Most of the existing code should be preserved
+- ✅ Only the requested changes should be different
+- ❌ If you return completely different code, YOU FAILED
 
 ═══════════════════════════════════════════════════════════════
 """
