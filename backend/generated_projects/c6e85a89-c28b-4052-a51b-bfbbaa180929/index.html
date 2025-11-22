@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Framed Application Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="main-frame">
+        <!-- Title Bar with Window Controls -->
+        <div class="title-bar">
+            <h1>
+                <i class="fas fa-desktop"></i>
+                Framed Application Interface
+            </h1>
+            <div class="window-controls">
+                <div class="control-btn minimize" onclick="minimizeWindow()">
+                    <i class="fas fa-minus"></i>
+                </div>
+                <div class="control-btn maximize" onclick="maximizeWindow()">
+                    <i class="fas fa-square"></i>
+                </div>
+                <div class="control-btn close" onclick="closeWindow()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-btn" onclick="newFile()">
+                <i class="fas fa-plus"></i>
+                New
+            </button>
+            <button class="toolbar-btn" onclick="openFile()">
+                <i class="fas fa-folder-open"></i>
+                Open
+            </button>
+            <button class="toolbar-btn" onclick="saveFile()">
+                <i class="fas fa-save"></i>
+                Save
+            </button>
+            <button class="toolbar-btn" onclick="printFile()">
+                <i class="fas fa-print"></i>
+                Print
+            </button>
+            <button class="toolbar-btn" onclick="showSettings()">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">
+                        <i class="fas fa-folder"></i>
+                        Projects
+                    </div>
+                    <div class="sidebar-item" onclick="selectProject('project1')">
+                        <i class="fas fa-file-code"></i>
+                        Web Application
+                    </div>
+                    <div class="sidebar-item" onclick="selectProject('project2')">
+                        <i class="fas fa-mobile-alt"></i>
+                        Mobile App
+                    </div>
+                    <div class="sidebar-item" onclick="selectProject('project3')">
+                        <i class="fas fa-database"></i>
+                        Database Design
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">
+                        <i class="fas fa-tools"></i>
+                        Tools
+                    </div>
+                    <div class="sidebar-item" onclick="openTool('editor')">
+                        <i class="fas fa-edit"></i>
+                        Code Editor
+                    </div>
+                    <div class="sidebar-item" onclick="openTool('terminal')">
+                        <i class="fas fa-terminal"></i>
+                        Terminal
+                    </div>
+                    <div class="sidebar-item" onclick="openTool('browser')">
+                        <i class="fas fa-globe"></i>
+                        Browser
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="frame-border">
+                    <div class="content-frame" id="contentFrame">
+                        <h2><i class="fas fa-rocket"></i> Welcome to the Framed Interface</h2>
+                        <p>This is a fully framed application interface with comprehensive borders, panels, and interactive elements. The interface includes a title bar with window controls, toolbar with action buttons, sidebar navigation, and a main content area with proper framing throughout.</p>
+                        <p style="margin-top: 20px;">Click on any sidebar item or toolbar button to see the framing system in action!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="indicator"></div>
+                <span>System Ready</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-clock"></i>
+                <span id="currentTime"></span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-user"></i>
+                <span>Admin User</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time in status bar
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // Window control functions
+        function minimizeWindow() {
+            const mainFrame = document.querySelector('.main-frame');
+            mainFrame.style.transform = 'scale(0.8)';
+            mainFrame.style.opacity = '0.7';
+            setTimeout(() => {
+                mainFrame.style.transform = 'scale(1)';
+                mainFrame.style.opacity = '1';
+            }, 500);
+        }
+
+        function maximizeWindow() {
+            const mainFrame = document.querySelector('.main-frame');
+            if (mainFrame.style.maxWidth === 'none') {
+                mainFrame.style.maxWidth = '1200px';
+                mainFrame.style.margin = '0 auto';
+            } else {
+                mainFrame.style.maxWidth = 'none';
+                mainFrame.style.margin = '0';
+            }
+        }
+
+        function closeWindow() {
+            if (confirm('Are you sure you want to close this application?')) {
+                const mainFrame = document.querySelector('.main-frame');
+                mainFrame.style.transform = 'scale(0)';
+                mainFrame.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.innerHTML = '<h1 style="text-align:center; margin-top:50px; color:white;">Application Closed</h1>';
+                }, 500);
+            }
+        }
+
+        // Toolbar functions
+        function newFile() {
+            updateContent('<h2><i class="fas fa-plus-circle"></i> New File Created</h2><p>A new file has been created in your workspace. You can now start editing your content within this framed environment.</p>');
+        }
+
+        function openFile() {
+            updateContent('<h2><i class="fas fa-folder-open"></i> File Opened</h2><p>Your file has been successfully opened. The content is now displayed within the main content frame with proper borders and styling.</p>');
+        }
+
+        function saveFile() {
+            updateContent('<h2><i class="fas fa-check-circle"></i> File Saved</h2><p>Your file has been saved successfully. All changes are preserved within the framed application structure.</p>');
+        }
+
+        function printFile() {
+            updateContent('<h2><i class="fas fa-print"></i> Print Preview</h2><p>Print preview is ready. The framed layout will be maintained in the printed output with proper formatting.</p>');
+        }
+
+        function showSettings() {
+            updateContent('<h2><i class="fas fa-cog"></i> Application Settings</h2><p>Configure your application preferences here. All settings are contained within the framed interface for easy access.</p>');
+        }
+
+        // Sidebar functions
+        function selectProject(project) {
+            const projectNames = {
+                project1: 'Web Application Project',
+                project2: 'Mobile Application Project', 
+                project3: 'Database Design Project'
+            };
+            updateContent(`<h2><i class="fas fa-project-diagram"></i> ${projectNames[project]}</h2><p>You have selected the ${projectNames[project]}. All project files and resources are organized within this framed workspace.</p>`);
+        }
+
+        function openTool(tool) {
+            const toolNames = {
+                editor: 'Code Editor',
+                terminal: 'Terminal',
+                browser: 'Web Browser'
+            };
+            updateContent(`<h2><i class="fas fa-tools"></i> ${toolNames[tool]} Opened</h2><p>The ${toolNames[tool]} is now active within the framed interface. All tools are integrated seamlessly into the application frame.</p>`);
+        }
+
+        // Update content function
+        function updateContent(html) {
+            const contentFrame = document.getElementById('contentFrame');
+            contentFrame.innerHTML = html;
+            contentFrame.style.background = '#e8f5e8';
+            setTimeout(() => {
+                contentFrame.style.background = '#f8f9fa';
+            }, 2000);
+        }
+
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Add frame animation on load
+        window.addEventListener('load', () => {
+            const mainFrame = document.querySelector('.main-frame');
+            mainFrame.style.transform =
