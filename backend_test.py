@@ -1470,16 +1470,16 @@ class AdvancedEditingTester:
         }
 
 async def main():
-    """Main test runner"""
-    tester = WebsiteGenerationTester()
-    results = await tester.run_all_tests()
+    """Main test runner for Advanced Editing System"""
+    tester = AdvancedEditingTester()
+    results = await tester.run_comprehensive_editing_test()
     
     # Return exit code based on results
     if results['failed_tests'] == 0:
-        logger.info("🎉 All tests passed!")
+        logger.info("🎉 All advanced editing tests passed!")
         return 0
     else:
-        logger.error(f"💥 {results['failed_tests']} test(s) failed!")
+        logger.error(f"💥 {results['failed_tests']} advanced editing test(s) failed!")
         return 1
 
 if __name__ == "__main__":
