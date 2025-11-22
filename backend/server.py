@@ -173,11 +173,26 @@ async def send_message(request: ChatRequest):
     user_doc['timestamp'] = user_doc['timestamp'].isoformat()
     await db.messages.insert_one(user_doc)
     
-    # Get AI response
+    # Get the latest generated website code for context
+    latest_website = None
+    try:
+        websites = await db.generated_websites.find(
+            {"session_id": request.session_id},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(1).to_list(1)
+        
+        if websites:
+            latest_website = websites[0]
+            logger.info(f"Found latest website for session {request.session_id}")
+    except Exception as e:
+        logger.warning(f"Could not retrieve latest website: {str(e)}")
+    
+    # Get AI response with website context
     ai_response = await ai_service.generate_response(
         prompt=request.message,
         model=request.model,
-        session_id=request.session_id
+        session_id=request.session_id,
+        current_website=latest_website
     )
     
     # Save AI message
