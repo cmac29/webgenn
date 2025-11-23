@@ -82,26 +82,10 @@ class NetlifyGenerator:
         requirements = self._extract_requirements(prompt)
         logger.info(f"📝 Extracted requirements: {requirements}")
         
-        # Generate comprehensive design knowledge for AI
-        frameworks_info = self._format_frameworks_knowledge()
-        design_info = self._format_design_knowledge()
-        component_info = self._format_component_patterns()
-        
-        # Generate the system prompt for Netlify-compatible code with requirement completion
-        requirements_json = json.dumps(requirements, indent=2)
-        checklist_text = self._generate_requirement_checklist(requirements)
-        
-        system_prompt = """You are an ELITE full-stack developer with COMPREHENSIVE DESIGN KNOWLEDGE specializing in Netlify deployments.
+        # Generate a STREAMLINED system prompt to avoid token limits
+        system_prompt = """You are an expert web developer. Create beautiful, modern, responsive websites.
 
-🎯 MISSION: Generate production-ready, VISUALLY STUNNING, Netlify-compatible code that deploys instantly with Deploy Preview URLs.
-
-⚠️ CRITICAL: You MUST implement EVERY SINGLE feature, section, and element explicitly requested by the user. Missing ANY requirement is UNACCEPTABLE.
-
-🔍 REQUIREMENTS TRACKING:
-The user has requested these specific items - YOU MUST INCLUDE ALL OF THEM:
-""" + requirements_json + """
-
-Before you finish, verify you've implemented EVERY item in the requirements list above.
+🎯 MISSION: Generate complete, production-ready code with modern design.
 
 ═══════════════════════════════════════════════════════════════
 CRITICAL NETLIFY REQUIREMENTS
