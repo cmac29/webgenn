@@ -109,8 +109,8 @@ CRITICAL NETLIFY REQUIREMENTS
 
 4. **DATABASE INTEGRATION**
    - Use API-based databases: Supabase, FaunaDB, Firebase
-   - Environment variables via `process.env.VARIABLE_NAME`
-   - Include placeholder keys with `// TODO: Add to Netlify Environment Variables`
+   - Environment variables via process.env.VARIABLE_NAME
+   - Include placeholder keys
 
 5. **FRONTEND REQUIREMENTS**
    - React/Next.js preferred, or vanilla HTML/CSS/JS
