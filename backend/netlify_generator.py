@@ -5,8 +5,10 @@ Generates deployment-ready, serverless code for Netlify platform
 import os
 import logging
 import json
+import re
 from typing import Dict, Any, List, Optional
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
