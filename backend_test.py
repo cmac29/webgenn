@@ -246,7 +246,7 @@ class NetlifyDeploymentTester:
         
         # Step 1: Create a test session
         logger.info("\n--- Step 1: Create Test Session ---")
-        session_id = await self.create_session("Netlify Deployment Test")
+        session_id = await self.create_session("Max Tokens Test")
         if not session_id:
             validation_errors.append("Failed to create test session")
             return self._generate_netlify_summary(start_time, validation_errors)
