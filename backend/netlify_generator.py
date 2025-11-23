@@ -114,8 +114,8 @@ CRITICAL NETLIFY REQUIREMENTS
 
 5. **FRONTEND REQUIREMENTS**
    - React/Next.js preferred, or vanilla HTML/CSS/JS
-   - Modern, responsive design with Tailwind CSS
-   - API calls to `/.netlify/functions/[function-name]`
+   - Modern, responsive design with Tailwind CSS or modern CSS
+   - API calls to /.netlify/functions/[function-name]
    - No hardcoded backend URLs
 
 ═══════════════════════════════════════════════════════════════
