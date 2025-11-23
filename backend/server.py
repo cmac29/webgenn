@@ -485,6 +485,99 @@ async def generate_netlify_project(request: NetlifyProjectRequest):
     
     return response
 
+@api_router.post("/netlify/deploy")
+async def deploy_to_netlify(project_id: str, auto_deploy: bool = True):
+    """
+    Deploy a generated project directly to Netlify
+    Returns instant Deploy Preview URL
+    """
+    logger.info(f"🚀 DEPLOYING TO NETLIFY: {project_id}")
+    
+    # Get project from database
+    project = await db.netlify_projects.find_one(
+        {"project_id": project_id},
+        {"_id": 0}
+    )
+    
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    files = project.get("files", {})
+    if not files:
+        raise HTTPException(status_code=400, detail="No files to deploy")
+    
+    # Generate site name from project
+    from slugify import slugify
+    base_name = slugify(project.get("prompt", "code-weaver-site")[:30])
+    
+    try:
+        # Deploy to Netlify
+        deploy_result = await netlify_deploy_service.create_site(
+            site_name=base_name,
+            project_files=files
+        )
+        
+        # Save deployment info to database
+        await db.netlify_projects.update_one(
+            {"project_id": project_id},
+            {"$set": {
+                "netlify_site_id": deploy_result.get("site_id"),
+                "netlify_deploy_id": deploy_result.get("deploy_id"),
+                "deploy_url": deploy_result.get("deploy_url"),
+                "deploy_preview_url": deploy_result.get("deploy_preview_url"),
+                "deployed_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        logger.info(f"✅ DEPLOYMENT SUCCESS!")
+        logger.info(f"   Site ID: {deploy_result.get('site_id')}")
+        logger.info(f"   Deploy URL: {deploy_result.get('deploy_url')}")
+        
+        return {
+            "success": True,
+            "project_id": project_id,
+            **deploy_result
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Deployment failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Deployment failed: {str(e)}")
+
+@api_router.post("/netlify/generate-and-deploy")
+async def generate_and_deploy(request: NetlifyProjectRequest):
+    """
+    Generate project AND deploy to Netlify in one call
+    Returns project data with instant Deploy Preview URL
+    """
+    logger.info(f"🚀 GENERATE & DEPLOY WORKFLOW")
+    
+    # Step 1: Generate project
+    project_response = await generate_netlify_project(request)
+    project_id = project_response.project_id
+    
+    logger.info(f"✅ Project generated: {project_id}")
+    
+    # Step 2: Deploy to Netlify
+    try:
+        deploy_result = await deploy_to_netlify(project_id=project_id)
+        
+        return {
+            "project": project_response.model_dump(),
+            "deployment": deploy_result,
+            "deploy_preview_url": deploy_result.get("deploy_preview_url"),
+            "instant_url": deploy_result.get("deploy_url")
+        }
+    except Exception as e:
+        logger.error(f"Deployment failed but project saved: {str(e)}")
+        # Return project anyway - user can deploy later
+        return {
+            "project": project_response.model_dump(),
+            "deployment": {
+                "success": False,
+                "error": str(e)
+            }
+        }
+
 @api_router.get("/netlify/project/{project_id}")
 async def get_netlify_project(project_id: str):
     """Get a specific Netlify project"""
