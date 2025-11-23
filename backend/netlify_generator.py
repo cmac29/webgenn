@@ -100,17 +100,7 @@ CRITICAL NETLIFY REQUIREMENTS
    - Functions go in `netlify/functions/` directory
    - Accessible via `/.netlify/functions/[function-name]`
 
-2. **NETLIFY FUNCTIONS FORMAT**
-   ```javascript
-   // netlify/functions/api.js
-   exports.handler = async (event, context) => {
-       return {
-           statusCode: 200,
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ message: 'Hello' })
-       };
-   };
-   ```
+2. **NETLIFY FUNCTIONS FORMAT** - Use exports.handler pattern
 
 3. **BUILD CONFIGURATION**
    - Must include `netlify.toml` in project root
