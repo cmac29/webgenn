@@ -23,6 +23,51 @@ logger = logging.getLogger(__name__)
 class NetlifyGenerator:
     def __init__(self, api_key: str):
         self.api_key = api_key
+        self._last_health_check = None
+        self._health_check_interval = 60  # seconds
+        self._service_healthy = True
+    
+    async def _check_api_health(self, provider: str, model: str) -> bool:
+        """
+        Quick health check before expensive operations
+        Returns True if API is responsive, False otherwise
+        """
+        import time
+        
+        # Skip if recently checked
+        if self._last_health_check and (time.time() - self._last_health_check) < self._health_check_interval:
+            return self._service_healthy
+        
+        try:
+            logger.info("🏥 Performing API health check...")
+            chat = LlmChat(
+                api_key=self.api_key,
+                session_id="health-check",
+                system_message="You are a helpful assistant."
+            )
+            chat.with_model(provider, model)
+            
+            # Simple test request with timeout
+            response = await asyncio.wait_for(
+                chat.send_message(UserMessage(text="respond with ok")),
+                timeout=10.0
+            )
+            
+            self._service_healthy = len(response) > 0
+            self._last_health_check = time.time()
+            
+            if self._service_healthy:
+                logger.info("✅ API health check passed")
+            else:
+                logger.warning("⚠️ API health check returned empty response")
+                
+            return self._service_healthy
+            
+        except Exception as e:
+            logger.warning(f"⚠️ API health check failed: {str(e)[:100]}")
+            self._service_healthy = False
+            self._last_health_check = time.time()
+            return False
     
     def _get_model_config(self, model: str) -> tuple:
         """Map model ID to provider and model name"""
