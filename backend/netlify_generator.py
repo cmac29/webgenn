@@ -74,10 +74,18 @@ class NetlifyGenerator:
         requirements = self._extract_requirements(prompt)
         logger.info(f"📝 Extracted requirements: {requirements}")
         
-        # Generate the system prompt for Netlify-compatible code
-        system_prompt = """You are an expert full-stack developer specializing in Netlify deployments.
+        # Generate the system prompt for Netlify-compatible code with requirement completion
+        system_prompt = f"""You are an expert full-stack developer specializing in Netlify deployments.
 
 🎯 MISSION: Generate production-ready, Netlify-compatible code that deploys instantly with Deploy Preview URLs.
+
+⚠️ CRITICAL: You MUST implement EVERY SINGLE feature, section, and element explicitly requested by the user. Missing ANY requirement is UNACCEPTABLE.
+
+🔍 REQUIREMENTS TRACKING:
+The user has requested these specific items - YOU MUST INCLUDE ALL OF THEM:
+{json.dumps(requirements, indent=2)}
+
+Before you finish, verify you've implemented EVERY item in the requirements list above.
 
 ═══════════════════════════════════════════════════════════════
 CRITICAL NETLIFY REQUIREMENTS
