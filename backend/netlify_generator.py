@@ -571,6 +571,25 @@ Respond with JSON:
                     # Validate structure
                     if "files" in project_data and isinstance(project_data["files"], dict):
                         logger.info(f"✅ Valid project structure with {len(project_data['files'])} files")
+                        
+                        # Decode base64 encoded files
+                        decoded_files = {}
+                        for filepath, content in project_data["files"].items():
+                            if isinstance(content, str):
+                                # Try to decode from base64
+                                try:
+                                    import base64
+                                    decoded_content = base64.b64decode(content).decode('utf-8')
+                                    decoded_files[filepath] = decoded_content
+                                    logger.info(f"✅ Decoded {filepath} from base64")
+                                except:
+                                    # If not base64, use as-is (fallback for plain text)
+                                    decoded_files[filepath] = content
+                                    logger.warning(f"⚠️ {filepath} not base64 encoded, using as-is")
+                            else:
+                                decoded_files[filepath] = content
+                        
+                        project_data["files"] = decoded_files
                         return project_data
                     else:
                         logger.warning("JSON parsed but missing 'files' key or invalid structure")
