@@ -109,107 +109,33 @@ CRITICAL NETLIFY REQUIREMENTS
    - Environment variables via process.env.VARIABLE_NAME
    - Include placeholder keys
 
-5. **FRONTEND REQUIREMENTS - CRITICAL VISUAL DESIGN**
-   - MUST use Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-   - Additional custom CSS in styles.css for unique styling
-   - Modern, responsive, pixel-perfect design
-   - API calls to /.netlify/functions/[function-name]
-   - No hardcoded backend URLs
-   - Professional color schemes, typography, spacing
-   - Hover effects, transitions, animations
-   - Modern fonts from Google Fonts
-   - Font Awesome icons (NOT emojis): <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-   
-   **FILE STRUCTURE:**
-   - index.html: Links to styles.css and app.js
-   - styles.css: ALL custom CSS (minimum 300 lines)
-   - app.js: ALL JavaScript for interactivity
-
-""" + frameworks_info + """
-
-""" + design_info + """
-
-""" + component_info + """
+5. **DESIGN REQUIREMENTS:**
+   - Use Tailwind CSS CDN: <script src="https://cdn.tailwindcss.com"></script>
+   - Font Awesome: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+   - Google Fonts: <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+   - Modern colors, gradients, shadows
+   - Responsive design
+   - Smooth animations and hover effects
 
 ═══════════════════════════════════════════════════════════════
-🎨 VISUAL DESIGN REQUIREMENTS - MANDATORY
+OUTPUT FORMAT
 ═══════════════════════════════════════════════════════════════
 
-1. **USE MODERN CSS FRAMEWORKS**:
-   - Tailwind CSS (preferred): <script src="https://cdn.tailwindcss.com"></script>
-   - OR Bootstrap 5: <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-   - OR modern custom CSS with gradients, shadows, animations
+Output ONLY valid JSON with 3 files:
 
-2. **PROFESSIONAL COLOR SCHEMES**:
-   - Use color palettes from knowledge base above
-   - Modern gradients (linear-gradient, radial-gradient)
-   - Proper contrast ratios
-   - Accent colors for CTAs
-   - Dark mode friendly options
-
-3. **TYPOGRAPHY**:
-   - Google Fonts: <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-   - Font pairings from knowledge base
-   - Proper font sizes and line heights
-   - Clear hierarchy
-
-4. **SPACING & LAYOUT**:
-   - Generous whitespace
-   - 8px grid system
-   - Section padding: 80-120px vertical
-   - Card padding: 24-40px
-   - Use CSS Grid and Flexbox
-
-5. **COMPONENTS WITH STYLE**:
-   - Elevated cards with shadows
-   - Gradient buttons with hover effects
-   - Smooth transitions (0.3s ease)
-   - Rounded corners (8-16px)
-   - Professional icons from Font Awesome
-
-6. **ANIMATIONS**:
-   - Fade-in on scroll
-   - Hover lift effects
-   - Smooth scrolling
-   - Micro-interactions
-   - Loading states
-
-7. **RESPONSIVE DESIGN**:
-   - Mobile-first approach
-   - Breakpoints: 640px, 768px, 1024px, 1280px
-   - Flexible grids
-   - Adaptive typography
-
-═══════════════════════════════════════════════════════════════
-OUTPUT FORMAT REQUIREMENTS - CRITICAL
-═══════════════════════════════════════════════════════════════
-
-YOU MUST OUTPUT VALID JSON. The system has robust parsing to handle your response.
-
-OUTPUT FORMAT:
 {
   "files": {
-    "index.html": "your complete HTML code here with CDN links and beautiful design",
-    "styles.css": "your complete CSS code here - MINIMUM 500 lines with comprehensive styling",
-    "app.js": "your complete JavaScript code here with interactivity",
-    "netlify.toml": "[build]\\n  publish = \".\"\\n  functions = \"netlify/functions\""
-  },
-  "deploy_config": {
-    "build_command": "",
-    "publish_dir": ".",
-    "functions_dir": "netlify/functions"
+    "index.html": "Complete HTML with CDN links and link to styles.css and app.js",
+    "styles.css": "Complete custom CSS (200+ lines)",
+    "app.js": "Complete JavaScript"
   }
 }
 
-IMPORTANT:
-- Escape quotes in your code as \\"
-- Escape newlines as \\n  
-- Escape backslashes as \\\\
-- Start response with {
-- End response with }
-- No markdown code blocks
-
-The system can also extract files even if JSON has minor issues, so focus on generating COMPLETE, BEAUTIFUL code with ALL requested features.
+Rules:
+- Escape " as \\"
+- Escape newlines as \\n
+- Start with { and end with }
+- NO markdown blocks
 
 ═══════════════════════════════════════════════════════════════
 """
