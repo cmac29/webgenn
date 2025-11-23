@@ -279,8 +279,8 @@ class NetlifyDeploymentTester:
             validation_errors.append(f"Generation and deployment failed: {deploy_result.get('error')}")
             return self._generate_netlify_summary(start_time, validation_errors)
         
-        # Step 3: Verify response contains required fields
-        logger.info("\n--- Step 3: Verify Response Structure ---")
+        # Step 3: Verify response contains required fields and file completeness
+        logger.info("\n--- Step 3: Verify Response Structure and File Completeness ---")
         project = deploy_result.get('project', {})
         deployment = deploy_result.get('deployment', {})
         deploy_preview_url = deploy_result.get('deploy_preview_url')
@@ -292,10 +292,50 @@ class NetlifyDeploymentTester:
             validation_errors.append("Response missing project.files")
         else:
             files = project.get('files', {})
-            expected_files = ['index.html', 'styles.css']
+            expected_files = ['index.html', 'styles.css', 'app.js']
             for expected_file in expected_files:
                 if expected_file not in files and not any(expected_file in f for f in files.keys()):
                     validation_errors.append(f"Missing expected file: {expected_file}")
+            
+            # CRITICAL CHECKS for max_tokens fix - verify files are COMPLETE
+            html_content = None
+            css_content = None
+            js_content = None
+            
+            for filepath, content in files.items():
+                if 'index.html' in filepath:
+                    html_content = content
+                elif 'styles.css' in filepath:
+                    css_content = content
+                elif 'app.js' in filepath:
+                    js_content = content
+            
+            # Verify file sizes (max_tokens fix should produce substantial content)
+            if html_content:
+                html_chars = len(html_content)
+                logger.info(f"HTML file size: {html_chars} characters")
+                if html_chars < 5000:
+                    validation_errors.append(f"HTML file too small ({html_chars} chars, minimum 5000)")
+            else:
+                validation_errors.append("HTML content not found in files")
+            
+            if css_content:
+                css_chars = len(css_content)
+                logger.info(f"CSS file size: {css_chars} characters")
+                if css_chars < 2000:
+                    validation_errors.append(f"CSS file too small ({css_chars} chars, minimum 2000)")
+            else:
+                validation_errors.append("CSS content not found in files")
+            
+            if js_content:
+                js_chars = len(js_content)
+                logger.info(f"JS file size: {js_chars} characters")
+            
+            # Check for truncation indicators in content
+            if html_content and (html_content.endswith('...') or 'truncated' in html_content.lower()):
+                validation_errors.append("HTML file appears to be truncated")
+            if css_content and (css_content.endswith('...') or 'truncated' in css_content.lower()):
+                validation_errors.append("CSS file appears to be truncated")
         
         # Check deployment fields
         if not deployment.get('site_id'):
