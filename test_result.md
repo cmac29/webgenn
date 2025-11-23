@@ -303,9 +303,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Netlify Auto-Deployment Integration"
-  stuck_tasks:
-    - "Netlify Auto-Deployment Integration"
+    - "Netlify Auto-Deployment - WORKING"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
