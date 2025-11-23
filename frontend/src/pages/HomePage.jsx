@@ -238,12 +238,12 @@ export default function HomePage() {
         idx === 2 ? { ...step, status: 'active' } : step
       ));
 
-      // Step 3: Code Generation (actual API call)
-      const response = await axios.post(`${API}/generate/website`, {
+      // Step 3: Code Generation & Netlify Deployment (actual API call)
+      const response = await axios.post(`${API}/netlify/generate-and-deploy`, {
         session_id: sessionId,
         prompt: prompt,
         model: selectedModel,
-        framework: 'html'
+        edit_mode: generatedWebsite !== null
       });
 
       setGenerationSteps(prev => prev.map((step, idx) => 
