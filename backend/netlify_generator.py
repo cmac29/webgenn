@@ -827,22 +827,19 @@ Respond with JSON:
     def _extract_files_with_regex(self, response: str) -> Dict[str, str]:
         """
         Extract files using regex patterns when JSON parsing fails
-        Looks for patterns like "filename": "content"
+        Handles BOTH escaped JSON strings AND raw unescaped content
         """
         files = {}
         
         try:
-            # Pattern to match file entries in JSON-like structure
-            # Handles: "index.html": "<!DOCTYPE...content..."
-            
-            # Find all "filename": pattern
             import re
             
-            # Match: "filename.ext": "content that may span lines"
-            # We'll extract between quotes, handling escaped quotes
-            
+            # Strategy 1: Try to extract from properly escaped JSON
+            # Pattern: "filename.ext": "escaped content"
             pattern = r'"([^"]+\.(html|css|js|toml|md|txt))"\s*:\s*"'
-            matches = re.finditer(pattern, response, re.IGNORECASE)
+            matches = list(re.finditer(pattern, response, re.IGNORECASE))
+            
+            logger.info(f"Found {len(matches)} file pattern matches")
             
             for match in matches:
                 filename = match.group(1)
@@ -863,8 +860,75 @@ Respond with JSON:
                     files[filename] = unescaped_content
                     logger.info(f"✅ Extracted {filename} ({len(unescaped_content)} chars)")
             
+            # Strategy 2: If that didn't work, try extracting raw content
+            # The AI might be outputting: "index.html": <!DOCTYPE html>...
+            # Instead of: "index.html": "<!DOCTYPE html>..."
+            if not files:
+                logger.info("Strategy 1 failed, trying raw content extraction...")
+                files = self._extract_raw_content(response)
+            
         except Exception as e:
             logger.error(f"Regex extraction error: {str(e)}")
+        
+        return files
+    
+    def _extract_raw_content(self, response: str) -> Dict[str, str]:
+        """
+        Extract files when AI outputs raw content without proper JSON escaping
+        Example: "index.html": <!DOCTYPE html>... instead of "index.html": "<!DOCTYPE..."
+        """
+        files = {}
+        
+        try:
+            import re
+            
+            # Look for: "filename.ext": followed by content (not in quotes)
+            # We need to find where the file starts and where it ends
+            
+            # Pattern to find file declarations
+            pattern = r'"(index\.html|styles\.css|app\.js|script\.js|netlify\.toml|README\.md)"\s*:\s*'
+            matches = list(re.finditer(pattern, response, re.IGNORECASE))
+            
+            logger.info(f"Found {len(matches)} raw content patterns")
+            
+            for i, match in enumerate(matches):
+                filename = match.group(1)
+                content_start = match.end()
+                
+                # Find where this file's content ends
+                # It ends at the next file declaration or at a closing brace
+                if i < len(matches) - 1:
+                    content_end = matches[i + 1].start()
+                else:
+                    # Last file - find the closing of the files object
+                    # Look for }, or }\n}
+                    closing_pattern = r',?\s*\}[\s\n]*\}?'
+                    closing_match = re.search(closing_pattern, response[content_start:])
+                    if closing_match:
+                        content_end = content_start + closing_match.start()
+                    else:
+                        content_end = len(response)
+                
+                # Extract the content
+                raw_content = response[content_start:content_end].strip()
+                
+                # Remove trailing commas and quotes
+                raw_content = raw_content.rstrip(',').strip()
+                if raw_content.startswith('"') and raw_content.endswith('"'):
+                    raw_content = raw_content[1:-1]
+                
+                # Unescape if needed
+                if '\\n' in raw_content or '\\"' in raw_content:
+                    raw_content = raw_content.replace('\\n', '\n')
+                    raw_content = raw_content.replace('\\"', '"')
+                    raw_content = raw_content.replace('\\\\', '\\')
+                
+                if raw_content and len(raw_content) > 50:  # Minimum content length
+                    files[filename] = raw_content
+                    logger.info(f"✅ Extracted {filename} ({len(raw_content)} chars) via raw extraction")
+            
+        except Exception as e:
+            logger.error(f"Raw content extraction error: {str(e)}")
         
         return files
     
