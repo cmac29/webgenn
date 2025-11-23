@@ -212,15 +212,17 @@ Go through the verification checklist above and confirm EVERY item is present in
 If ANY item is missing, ADD IT NOW before responding.
 
 🚨 OUTPUT FORMAT - EXTREMELY IMPORTANT:
-Respond with ONLY valid JSON. No explanations, no markdown, no code blocks.
-Start with { and end with }. Follow this exact structure:
+Respond with ONLY valid JSON. NO explanations, NO markdown, NO code blocks.
 
+YOU MUST BASE64 ENCODE ALL FILE CONTENTS!
+
+Structure:
 {
   "files": {
-    "index.html": "<!DOCTYPE html>...",
-    "styles.css": "body {...}",
-    "app.js": "// your js",
-    "netlify.toml": "[build]..."
+    "index.html": "BASE64_ENCODED_HTML_STRING",
+    "styles.css": "BASE64_ENCODED_CSS_STRING", 
+    "app.js": "BASE64_ENCODED_JS_STRING",
+    "netlify.toml": "BASE64_ENCODED_CONFIG"
   },
   "deploy_config": {
     "build_command": "",
@@ -229,7 +231,14 @@ Start with { and end with }. Follow this exact structure:
   }
 }
 
-Do NOT wrap in markdown code blocks. Just pure JSON.
+WHY BASE64: HTML/CSS/JS has quotes and newlines that break JSON. Base64 solves this.
+
+STEPS:
+1. Generate your complete HTML/CSS/JS code
+2. Base64 encode each file's content
+3. Put base64 strings in JSON
+
+Pure JSON only. No markdown. Base64 encoded files.
 
 ═══════════════════════════════════════════════════════════════
 🚨 REQUIREMENT COMPLETION CHECKLIST - MANDATORY
