@@ -366,6 +366,9 @@ REMEMBER: Beautiful design is great, but COMPLETENESS is mandatory. Every featur
             )
             chat.with_model(provider, model)
             
+            # Set max_tokens to allow complete responses
+            chat.with_params(max_tokens=16000)
+            
             response = await chat.send_message(UserMessage(text=user_prompt))
             logger.info(f"✅ AI Response received: {len(response)} characters")
             
@@ -514,6 +517,9 @@ Ensure the edited project remains Netlify-compatible!"""
                 system_message=system_prompt
             )
             chat.with_model(provider, model)
+            
+            # Set max_tokens to allow complete responses
+            chat.with_params(max_tokens=16000)
             
             response = await chat.send_message(UserMessage(text=user_prompt))
             logger.info(f"✅ Edit response received: {len(response)} characters")
