@@ -315,17 +315,30 @@ REMEMBER: Beautiful design is great, but COMPLETENESS is mandatory. Every featur
         current_files = current_project.get("files", {})
         logger.info(f"Editing project with {len(current_files)} existing files")
         
-        system_prompt = """You are an expert full-stack developer editing a Netlify-deployed project.
+        # Extract what user wants to change/add
+        edit_requirements = self._extract_requirements(prompt)
+        logger.info(f"📝 Edit requirements: {edit_requirements}")
+        
+        system_prompt = f"""You are an expert full-stack developer editing a Netlify-deployed project.
 
-🔄 EDITING MODE - PRESERVE EXISTING STRUCTURE
+🔄 EDITING MODE - PRESERVE EXISTING STRUCTURE + ADD NEW REQUIREMENTS
+
+USER WANTS TO MAKE THESE CHANGES:
+{json.dumps(edit_requirements, indent=2)}
 
 CRITICAL RULES:
 1. You are EDITING existing code, NOT creating from scratch
 2. PRESERVE all existing files unless explicitly asked to remove them
-3. Make SURGICAL changes - only modify what's requested
-4. Maintain Netlify Functions format and structure
-5. Keep netlify.toml configuration unless changes are needed
-6. Return the COMPLETE project with modifications
+3. ADD/MODIFY the specific items user requested
+4. Make SURGICAL changes - only modify what's requested
+5. Maintain Netlify Functions format and structure
+6. Keep netlify.toml configuration unless changes are needed
+7. Return the COMPLETE project with modifications
+
+⚠️ VERIFICATION CHECKLIST FOR EDITS:
+{self._generate_requirement_checklist(edit_requirements)}
+
+EVERY item above MUST be present in your edited code. Check before submitting.
 
 OUTPUT FORMAT: JSON with same structure as creation, but with edited files.
 """
