@@ -66,9 +66,13 @@ class NetlifyGenerator:
     async def _create_netlify_project(self, prompt: str, provider: str, model: str, session_id: str) -> Dict[str, Any]:
         """Create a new Netlify project from scratch"""
         
-        # Analyze user intent
+        # Analyze user intent with detailed requirements extraction
         analysis = await self._analyze_project_requirements(prompt, provider, model, session_id)
-        logger.info(f"Project analysis: {json.dumps(analysis, indent=2)}")
+        logger.info(f"📋 Project analysis: {json.dumps(analysis, indent=2)}")
+        
+        # Extract explicit requirements from prompt
+        requirements = self._extract_requirements(prompt)
+        logger.info(f"📝 Extracted requirements: {requirements}")
         
         # Generate the system prompt for Netlify-compatible code
         system_prompt = """You are an expert full-stack developer specializing in Netlify deployments.
