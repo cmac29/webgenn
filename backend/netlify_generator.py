@@ -258,20 +258,37 @@ Generate complete JSON with all 3 files. Make it visually stunning!"""
         except Exception as e:
             error_msg = str(e).lower()
             
-            # Budget errors - raise
+            # Budget errors
             if "budget" in error_msg or "exceeded" in error_msg:
                 logger.error(f"❌ BUDGET ERROR: {str(e)}")
-                raise HTTPException(status_code=402, detail=f"API budget exceeded: {str(e)}")
+                raise HTTPException(
+                    status_code=402, 
+                    detail="API budget exceeded. Please increase your API budget or use a different key."
+                )
             
-            # Parsing errors - DO NOT FALLBACK, raise the error
+            # 502 / Gateway errors - service unavailable
+            if "502" in error_msg or "bad gateway" in error_msg or "badgateway" in error_msg:
+                logger.error(f"❌ API SERVICE UNAVAILABLE: {str(e)}")
+                raise HTTPException(
+                    status_code=503, 
+                    detail="AI service is temporarily unavailable (502 error). Please try again in a moment."
+                )
+            
+            # Parsing errors
             if "parsing failed" in error_msg or "ai response parsing" in error_msg:
                 logger.error(f"❌ PARSING ERROR: {str(e)}")
                 logger.error("Check /tmp/failed_ai_response.txt for the response")
-                raise HTTPException(status_code=500, detail=f"Failed to parse AI response: {str(e)}")
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Failed to parse AI response. The AI may have generated invalid output."
+                )
             
-            # Other genuine errors - also raise
+            # Other errors
             logger.error(f"❌ Generation failed with error: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Generation failed: {str(e)}"
+            )
     
     async def _edit_netlify_project(self, prompt: str, current_project: Dict, provider: str, model: str, session_id: str) -> Dict[str, Any]:
         """Edit an existing Netlify project"""
