@@ -230,7 +230,7 @@ OUTPUT AS JSON with structure shown above.
 
 Before submitting your code, verify EACH requirement is implemented:
 
-{self._generate_requirement_checklist(requirements)}
+""" + self._generate_requirement_checklist(requirements) + """
 
 YOU MUST CHECK OFF EVERY ITEM. If any item is NOT implemented, add it now before responding.
 
