@@ -376,10 +376,24 @@ class NetlifyDeploymentTester:
                 if not url_test_result.get('has_renovation_content'):
                     validation_errors.append("Live URL does not contain expected renovation business content")
         
-        # Step 6: Check backend logs
-        logger.info("\n--- Step 6: Check Backend Logs ---")
+        # Step 6: Check backend logs for AI response and parsing
+        logger.info("\n--- Step 6: Check Backend Logs for AI Response and Parsing ---")
         log_analysis = await self.check_backend_logs_for_deployment()
         
+        # Check AI response character count (max_tokens fix verification)
+        ai_response_chars = log_analysis.get('ai_response_chars')
+        if ai_response_chars:
+            logger.info(f"AI Response received: {ai_response_chars} characters")
+            if ai_response_chars < 20000:
+                validation_errors.append(f"AI response too small ({ai_response_chars} chars, expected >20,000)")
+        else:
+            validation_errors.append("No AI response character count found in logs")
+        
+        # Check for truncation and parsing errors
+        if log_analysis.get('has_truncation_errors'):
+            validation_errors.append("Backend logs show truncation errors")
+        
+        # Check deployment success/errors
         if not log_analysis.get('has_deployment_success'):
             validation_errors.append("Backend logs don't show deployment success messages")
         if log_analysis.get('has_deployment_errors'):
