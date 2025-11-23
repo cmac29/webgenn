@@ -294,9 +294,9 @@ Respond with ONLY valid JSON. NO explanations before or after.
 Structure:
 {
   "files": {
-    "index.html": "your HTML with escaped quotes and newlines",
-    "styles.css": "your CSS code",
-    "app.js": "your JavaScript code",
+    "index.html": "your complete HTML with EMBEDDED <style> and <script> tags",
+    "styles.css": "OPTIONAL: duplicate of the embedded CSS",
+    "app.js": "OPTIONAL: duplicate of the embedded JavaScript",
     "netlify.toml": "[build]\\n  publish = \\".\\""
   },
   "deploy_config": {
@@ -306,13 +306,52 @@ Structure:
   }
 }
 
+🚨 CRITICAL FILE STRUCTURE FOR NETLIFY:
+Your HTML MUST have ALL styles and scripts EMBEDDED inside it:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <!-- CDN links -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- EMBEDDED STYLES - MANDATORY -->
+    <style>
+        /* ALL your CSS code here */
+        body { margin: 0; }
+        /* ... all styles ... */
+    </style>
+</head>
+<body>
+    <!-- HTML content -->
+    
+    <!-- EMBEDDED JAVASCRIPT - MANDATORY -->
+    <script>
+        // ALL your JavaScript code here
+        console.log('App loaded');
+        // ... all JavaScript ...
+    </script>
+</body>
+</html>
+```
+
+DO NOT reference external files like:
+❌ <link rel="stylesheet" href="styles.css">
+❌ <link rel="stylesheet" href="static/styles.css">
+❌ <script src="app.js"></script>
+
+The system will extract embedded styles/scripts into separate files automatically.
+
 ESCAPING RULES:
 - Replace " with \\"
 - Replace newline with \\n
 - Replace \\ with \\\\
 
 The system has robust parsing and can extract files even from imperfect JSON.
-Focus on generating COMPLETE, BEAUTIFUL code with ALL user requirements.
+Focus on generating COMPLETE, BEAUTIFUL code with ALL user requirements and EMBEDDED styles/scripts.
 
 ═══════════════════════════════════════════════════════════════
 🚨 REQUIREMENT COMPLETION CHECKLIST - MANDATORY
